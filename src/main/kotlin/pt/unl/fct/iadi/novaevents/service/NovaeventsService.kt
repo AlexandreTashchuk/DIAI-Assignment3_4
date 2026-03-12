@@ -40,4 +40,8 @@ class NovaeventsService {
     )
 
     val clubMap = clubs.associateBy { it.id }
+
+    fun listAllClubs(): List<Club> {
+        return clubs
+    }
 }
