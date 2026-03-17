@@ -1,6 +1,7 @@
 package pt.unl.fct.iadi.novaevents.service
 
 import org.springframework.stereotype.Service
+import pt.unl.fct.iadi.novaevents.controller.dto.EventForm
 import pt.unl.fct.iadi.novaevents.model.Club
 import pt.unl.fct.iadi.novaevents.model.Event
 import java.time.LocalDate
@@ -12,37 +13,101 @@ class NovaeventsService {
         Club(
             1,
             "Chess Club",
-            "The Chess Club description",
+            "A community for players of all skill levels to learn, practice, and compete in chess. " +
+                    "We host weekly matches, strategy sessions, and tournaments, and participate in inter-university competitions.",
             Club.ClubCategory.SPORTS
         ),
         Club(
             2,
             "Robotics Club",
-            "The Robotics Club is the place to turn ideas into machines",
+            "The Robotics Club is the place to turn ideas into machines. Members work on hands-on projects involving " +
+                    "electronics, programming, and mechanical design, and regularly participate in robotics competitions.",
             Club.ClubCategory.TECHNOLOGY
         ),
         Club(
             3,
             "Photography Club",
-            "The Photography Club description",
+            "A space for photography enthusiasts to improve their skills and showcase their work. Activities include " +
+                    "photo walks, editing workshops, and exhibitions across multiple photography styles.",
             Club.ClubCategory.SOCIAL
         ),
         Club(
             4,
             "Hiking & Outdoors Club",
-            "The Hiking Club description",
+            "Focused on outdoor activities such as hiking and camping, this club organizes regular trips to natural " +
+                    "locations, promoting physical activity, exploration, and environmental awareness.",
             Club.ClubCategory.SOCIAL
         ),
         Club(
             5,
             "Film Society",
-            "The Film Society description",
+            "A club for cinema enthusiasts to watch and discuss films from different genres and cultures. " +
+                    "Includes screenings, thematic series, and discussions on film techniques and storytelling.",
             Club.ClubCategory.CULTURAL
         )
     )
 
     private val clubMap = clubs.associateBy { it.id }
     private val events: MutableList<Event> = mutableListOf()
+
+    private var nextEventId: Long = 1
+
+    init {
+        seedEvents()
+    }
+
+    private fun seedEvents() {
+
+        events.addAll(
+            listOf(
+                Event(
+                    nextEventId++,
+                    1,
+                    "Chess Tournament",
+                    LocalDate.now().plusDays(5),
+                    "Room A",
+                    Event.EventType.COMPETITION,
+                    "Annual tournament"
+                ),
+                Event(
+                    nextEventId++,
+                    2,
+                    "Robotics Workshop",
+                    LocalDate.now().plusDays(10),
+                    "Lab 1",
+                    Event.EventType.WORKSHOP,
+                    "Build a robot"
+                ),
+                Event(
+                    nextEventId++,
+                    3,
+                    "Photo Walk",
+                    LocalDate.now().plusDays(3),
+                    "City Center",
+                    Event.EventType.SOCIAL,
+                    "Outdoor photography"
+                ),
+                Event(
+                    nextEventId++,
+                    4,
+                    "Mountain Hike",
+                    LocalDate.now().plusDays(7),
+                    "Sintra",
+                    Event.EventType.SOCIAL,
+                    "Day hike"
+                ),
+                Event(
+                    nextEventId++,
+                    5,
+                    "Film Screening",
+                    LocalDate.now().plusDays(2),
+                    "Auditorium",
+                    Event.EventType.MEETING,
+                    "Classic movie night"
+                )
+            )
+        )
+    }
 
     fun listAllClubs(): List<Club> {
         return clubs
@@ -71,5 +136,38 @@ class NovaeventsService {
                     (to == null || !event.date.isAfter(to))
 
         }
+    }
+
+    fun getEventById(clubId: Long, eventId: Long): Event {
+        clubs.find { it.id == clubId }
+            ?: throw ClubNotFoundException(clubId)
+
+        return events.find { it.id == eventId && it.clubId == clubId }
+            ?: throw EventNotFoundException("Event with id:$eventId not found")
+    }
+
+    fun createEvent(clubId: Long, form: EventForm): Event {
+
+        val club = clubs.find { it.id == clubId }
+            ?: throw ClubNotFoundException(clubId)
+
+        //TODO: Event names should be different across all clubs
+        // ✅ across ALL clubs
+        if (events.any { it.name.equals(form.name, ignoreCase = true) }) {
+            throw EventAlreadyExistsException("Event '${form.name}' already exists")
+        }
+
+        val event = Event(
+            id = nextEventId++,
+            clubId = clubId,
+            name = form.name!!,
+            date = form.date!!,
+            location = form.location ?: "",
+            type = form.type!!,
+            description = form.description ?: ""
+        )
+
+        events.add(event)
+        return event
     }
 }
