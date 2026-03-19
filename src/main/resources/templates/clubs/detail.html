@@ -21,7 +21,14 @@
 
     <hr>
 
-    <h3>Upcoming Events</h3>
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h3>Upcoming Events</h3>
+
+        <a class="btn btn-success"
+           th:href="@{/clubs/{clubId}/events/new(clubId=${club.id})}">
+            + Create Event
+        </a>
+    </div>
 
     <table class="table table-striped">
 

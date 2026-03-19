@@ -99,7 +99,7 @@ class NovaeventsController (val service: NovaeventsService) : NovaeventsAPI {
 
         return try {
             val event = service.createEvent(clubId, eventForm)
-            "redirect:/events/${event.id}"
+            "redirect:/clubs/${clubId}/events/${event.id}"
         } catch (ex: EventAlreadyExistsException) {
 
             //TODO: Not sure
