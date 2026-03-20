@@ -163,4 +163,23 @@ class NovaeventsController (val service: NovaeventsService) : NovaeventsAPI {
             "events/edit"
         }
     }
+
+    override fun showDeleteConfirmation(
+        clubId: Long,
+        eventId: Long,
+        model: Model
+    ): String {
+        val event = service.getEventById(clubId, eventId)
+
+        model.addAttribute("event", event)
+        model.addAttribute("clubId", clubId)
+
+        return "events/delete"
+    }
+
+    override fun deleteEvent(clubId: Long, eventId: Long): String {
+        service.deleteEventById(clubId, eventId)
+
+        return "redirect:/clubs/$clubId"
+    }
 }

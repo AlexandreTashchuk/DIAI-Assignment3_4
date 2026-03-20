@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="fragments/layout :: head('Delete Event')"></head>
+
+<body>
+
+<div th:replace="fragments/layout :: navbar"></div>
+
+<div class="container mt-4">
+
+    <h2 class="mb-4 text-danger">Confirm Deletion</h2>
+
+    <p>
+        Are you sure you want to delete the event:
+        <strong th:text="${event.name}"></strong>?
+    </p>
+
+    <p><strong>Date:</strong> <span th:text="${event.date}"></span></p>
+    <p><strong>Type:</strong> <span th:text="${event.type}"></span></p>
+
+    <div class="mt-4 d-flex gap-2">
+
+        <!-- Confirm -->
+        <form th:action="@{/clubs/{clubId}/events/{eventId}/delete(
+                            clubId=${clubId},
+                            eventId=${event.id})}"
+              method="post">
+            <button type="submit" class="btn btn-danger">
+                Yes, Delete
+            </button>
+        </form>
+
+        <!-- Cancel -->
+        <a th:href="@{/clubs/{clubId}/events/{eventId}(
+                        clubId=${clubId},
+                        eventId=${event.id})}"
+           class="btn btn-secondary">
+            Cancel
+        </a>
+
+    </div>
+
+</div>
+
+</body>
+</html>

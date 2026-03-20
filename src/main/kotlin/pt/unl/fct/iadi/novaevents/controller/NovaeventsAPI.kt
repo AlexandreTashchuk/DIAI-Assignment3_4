@@ -85,4 +85,23 @@ interface NovaeventsAPI {
         bindingResult: BindingResult,
         model: Model
     ): String //US6
+
+    @RequestMapping(
+        value = ["/clubs/{clubId}/events/{eventId}/delete"],
+        method = [RequestMethod.GET]
+    )
+    fun showDeleteConfirmation(
+        @PathVariable clubId: Long,
+        @PathVariable eventId: Long,
+        model: Model
+    ): String
+
+    @RequestMapping(
+        value = ["/clubs/{clubId}/events/{eventId}/delete"],
+        method = [RequestMethod.POST]
+    )
+    fun deleteEvent(
+        @PathVariable clubId: Long,
+        @PathVariable eventId: Long
+    ): String
 }

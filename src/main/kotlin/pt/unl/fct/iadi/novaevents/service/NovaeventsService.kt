@@ -213,4 +213,18 @@ class NovaeventsService {
 
         return updatedEvent
     }
+
+    fun deleteEventById(clubId: Long, eventId: Long) {
+
+        clubMap[clubId] ?: throw ClubNotFoundException(clubId)
+
+        events.find { it.id == eventId }
+            ?: throw EventNotFoundException("Event $eventId not found")
+
+//        if (event.clubId != clubId) {
+//            throw ClubDoesNotHaveEventException("Club $clubId does not own event $eventId")
+//        }
+
+        events.removeIf { it.id == eventId }
+    }
 }
