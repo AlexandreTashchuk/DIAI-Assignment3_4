@@ -141,14 +141,26 @@ class NovaeventsController (val service: NovaeventsService) : NovaeventsAPI {
         bindingResult: BindingResult,
         model: Model
     ): String {
+
         if (bindingResult.hasErrors()) {
             model.addAttribute("clubId", clubId)
             model.addAttribute("eventId", eventId)
             return "events/edit"
         }
 
-        service.updateEventById(clubId, eventId, eventForm)
+        service.updateEventById(eventId, clubId, eventForm)
+        return try {
+            val event = service.updateEventById(eventId, clubId, eventForm)
+            "redirect:/clubs/${clubId}/events/${event.id}"
+        } catch (ex: EventAlreadyExistsException) {
 
-        return "redirect:/clubs/$clubId/events/$eventId"
+            // bindingResult.rejectValue("name", "error.name", ex.message ?: "Duplicate event")
+            bindingResult.rejectValue("name", "error.name", "An event with this name already exists")
+
+            model.addAttribute("types", Event.EventType.values())
+            model.addAttribute("clubId", clubId)
+
+            "events/edit"
+        }
     }
 }

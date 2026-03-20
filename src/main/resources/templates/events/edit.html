@@ -1,36 +1,71 @@
-<form th:action="@{/clubs/{clubId}/events/{eventId}(clubId=${clubId}, eventId=${eventId})}"
-      th:object="${eventForm}"
-      method="post">
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
 
-    <div class="mb-3">
-        <label>Name</label>
-        <input type="text" th:field="*{name}" class="form-control"/>
-    </div>
+<head th:replace="fragments/layout :: head('Edit Event')"></head>
 
-    <div class="mb-3">
-        <label>Date</label>
-        <input type="date" th:field="*{date}" class="form-control"/>
-    </div>
+<body>
 
-    <div class="mb-3">
-        <label>Type</label>
-        <select th:field="*{type}" class="form-control">
-            <option th:each="t : ${T(pt.unl.fct.iadi.novaevents.model.Event.EventType).values()}"
-                    th:value="${t}"
-                    th:text="${t}">
-            </option>
-        </select>
-    </div>
+<div th:replace="fragments/layout :: navbar"></div>
 
-    <div class="mb-3">
-        <label>Location</label>
-        <input type="text" th:field="*{location}" class="form-control"/>
-    </div>
+<div class="container mt-4">
 
-    <div class="mb-3">
-        <label>Description</label>
-        <textarea th:field="*{description}" class="form-control"></textarea>
-    </div>
+    <h2 class="mb-4">Edit Event</h2>
 
-    <button type="submit" class="btn btn-primary">Update Event</button>
-</form>
+    <form th:action="@{/clubs/{clubId}/events/{eventId}(clubId=${clubId}, eventId=${eventId})}"
+          th:object="${eventForm}"
+          method="post">
+
+        <!-- Name -->
+        <div class="mb-3">
+            <label class="form-label">Name</label>
+            <input type="text" th:field="*{name}" class="form-control"/>
+            <div class="text-danger" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></div>
+        </div>
+
+        <!-- Date -->
+        <div class="mb-3">
+            <label class="form-label">Date</label>
+            <input type="date" th:field="*{date}" class="form-control"/>
+            <div class="text-danger" th:if="${#fields.hasErrors('date')}" th:errors="*{date}"></div>
+        </div>
+
+        <!-- Type -->
+        <div class="mb-3">
+            <label class="form-label">Type</label>
+            <select th:field="*{type}" class="form-control">
+                <option th:each="t : ${T(pt.unl.fct.iadi.novaevents.model.Event.EventType).values()}"
+                        th:value="${t}"
+                        th:text="${t}">
+                </option>
+            </select>
+            <div class="text-danger" th:if="${#fields.hasErrors('type')}" th:errors="*{type}"></div>
+        </div>
+
+        <!-- Location -->
+        <div class="mb-3">
+            <label class="form-label">Location</label>
+            <input type="text" th:field="*{location}" class="form-control"/>
+        </div>
+
+        <!-- Description -->
+        <div class="mb-3">
+            <label class="form-label">Description</label>
+            <textarea th:field="*{description}" class="form-control" rows="4"></textarea>
+        </div>
+
+        <!-- Actions -->
+        <div class="d-flex gap-2 mt-4">
+            <button type="submit" class="btn btn-primary">Update Event</button>
+
+            <a th:href="@{/clubs/{clubId}/events/{eventId}(clubId=${clubId}, eventId=${eventId})}"
+               class="btn btn-secondary">
+                Cancel
+            </a>
+        </div>
+
+    </form>
+
+</div>
+
+</body>
+</html>

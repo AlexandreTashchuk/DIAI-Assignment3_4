@@ -1,6 +1,7 @@
 package pt.unl.fct.iadi.novaevents.service
 
 import org.springframework.stereotype.Service
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter.event
 import pt.unl.fct.iadi.novaevents.controller.dto.EventForm
 import pt.unl.fct.iadi.novaevents.model.Club
 import pt.unl.fct.iadi.novaevents.model.Event
@@ -49,8 +50,6 @@ class NovaeventsService {
 
     private val clubMap = clubs.associateBy { it.id }
     private val events: MutableList<Event> = mutableListOf()
-    private val eventsMap = events.associateBy { it.id }
-
     private var nextEventId: Long = 1
 
     init {
@@ -158,17 +157,14 @@ class NovaeventsService {
     }
 
     fun getEventById(clubId: Long, eventId: Long): Event {
-        clubs.find { it.id == clubId }
-            ?: throw ClubNotFoundException(clubId)
+        clubMap[clubId] ?: throw ClubNotFoundException(clubId)
 
-        return events.find { it.id == eventId && it.clubId == clubId }
-            ?: throw EventNotFoundException("Event with id:$eventId not found")
+        return events.find { it.id == eventId } ?: throw EventNotFoundException("Event with id:$eventId not found")
     }
 
     fun createEvent(clubId: Long, form: EventForm): Event {
 
-        val club = clubs.find { it.id == clubId }
-            ?: throw ClubNotFoundException(clubId)
+        clubMap[clubId] ?: throw ClubNotFoundException(clubId)
 
         if (events.any { it.name.equals(form.name, ignoreCase = true) }) {
             throw EventAlreadyExistsException("Event '${form.name}' already exists")
@@ -189,8 +185,32 @@ class NovaeventsService {
     }
 
     fun updateEventById(eventId: Long, clubId: Long, form: EventForm): Event {
-        clubs.find { it.id == clubId }
-            ?: throw ClubNotFoundException(clubId)
-        // TODO:
+        clubMap[clubId] ?: throw ClubNotFoundException(clubId)
+        val currentEvent =
+            events.find { it.id == eventId } ?: throw EventNotFoundException("Event with id:$eventId not found")
+        if (currentEvent.clubId != clubId) {
+            throw ClubDoesNotHaveEventException("Club $clubId does not have event with id:$eventId")
+        }
+        if (events.any {
+                it.id != eventId &&
+                it.name.equals(form.name, ignoreCase = true)
+            }) {
+            throw EventAlreadyExistsException("Event '${form.name}' already exists")
+        }
+        val index = events.indexOfFirst { it.id == eventId }
+
+        val updatedEvent = Event(
+            id = currentEvent.id,
+            clubId = currentEvent.clubId,
+            name = form.name!!,
+            date = form.date!!,
+            location = form.location ?: currentEvent.location,
+            type = form.type!!,
+            description = form.description ?: currentEvent.description
+        )
+
+        events[index] = updatedEvent
+
+        return updatedEvent
     }
 }

@@ -5,6 +5,7 @@ import org.springframework.ui.Model
 import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.ResponseStatus
+import pt.unl.fct.iadi.novaevents.service.ClubDoesNotHaveEventException
 import pt.unl.fct.iadi.novaevents.service.ClubNotFoundException
 import pt.unl.fct.iadi.novaevents.service.EventAlreadyExistsException
 import pt.unl.fct.iadi.novaevents.service.EventNotFoundException
@@ -21,6 +22,7 @@ class GlobalExceptionHandler {
 
     //TODO: Response Status + 400.html page
     @ExceptionHandler(EventAlreadyExistsException::class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     fun handleDuplicateEvent(ex: EventAlreadyExistsException, model: Model): String {
         model.addAttribute("message", ex.message)
         return "error/400"
@@ -31,5 +33,12 @@ class GlobalExceptionHandler {
     fun handleEventNotFound(ex: EventNotFoundException, model: Model): String {
         model.addAttribute("message", ex.message)
         return "error/404"
+    }
+
+    @ExceptionHandler(ClubDoesNotHaveEventException::class)
+    @ResponseStatus(HttpStatus.CONFLICT)
+    fun handleClubDoesNotHaveEvent(ex: ClubDoesNotHaveEventException, model: Model): String {
+        model.addAttribute("message", ex.message)
+        return "error/405"
     }
 }
