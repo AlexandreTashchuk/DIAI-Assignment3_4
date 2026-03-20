@@ -98,7 +98,7 @@ interface NovaeventsAPI {
 
     @RequestMapping(
         value = ["/clubs/{clubId}/events/{eventId}/delete"],
-        method = [RequestMethod.POST]
+        method = [RequestMethod.DELETE]
     )
     fun deleteEvent(
         @PathVariable clubId: Long,
