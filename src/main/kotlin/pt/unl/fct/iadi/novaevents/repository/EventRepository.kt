@@ -48,6 +48,28 @@ interface EventRepository : JpaRepository<Event, Long> {
         to: LocalDate?
     ): List<Event>
 
+    @Query("""
+    SELECT e.id AS id,
+           e.clubId AS clubId,
+           c.name AS clubName,
+           e.name AS name,
+           e.date AS date,
+           e.type AS type,
+           e.location AS location
+    FROM Event e
+    LEFT JOIN Club c ON c.id = e.clubId
+    WHERE (:type IS NULL OR e.type = :type)
+      AND (:clubId IS NULL OR e.clubId = :clubId)
+      AND (:from IS NULL OR e.date >= :from)
+      AND (:to IS NULL OR e.date <= :to)
+""")
+    fun filterEventRows(
+        type: Event.EventType?,
+        clubId: Long?,
+        from: LocalDate?,
+        to: LocalDate?
+    ): List<EventListRow>
+
     @Query("SELECT e.clubId AS clubId, COUNT(e) AS eventCount FROM Event e GROUP BY e.clubId")
     fun countEventsByClub(): List<ClubEventCount>
 }

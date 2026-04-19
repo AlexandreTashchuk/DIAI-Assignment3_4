@@ -13,6 +13,8 @@ import java.time.LocalDate
 @Controller
 class NovaeventsController(val service: NovaeventsService, val eventRepository: EventRepository) : NovaeventsAPI {
 
+    data class ClubOption(val id: Long, val name: String)
+
 //    override fun listAllClubs(model: Model): String {
 //        model.addAttribute("clubs", service.listAllClubs())
 //        return "clubs/list"
@@ -49,13 +51,14 @@ class NovaeventsController(val service: NovaeventsService, val eventRepository: 
         model: Model
     ): String {
 
-        val events = service.filterEvents(type, clubId, from, to)
-        val clubs = service.listAllClubs()
-        val clubMap = clubs.associateBy { it.id }
+        val events = eventRepository.filterEventRows(type, clubId, from, to)
+        val clubs = events
+            .filter { it.clubName != null }
+            .map { ClubOption(it.clubId, it.clubName!!) }
+            .distinctBy { it.id }
 
         model.addAttribute("events", events)
         model.addAttribute("clubs", clubs)
-        model.addAttribute("clubMap", clubMap)
         model.addAttribute("types", Event.EventType.values())
         //model.addAttribute("types", Event.EventType.entries.toTypedArray())
 
