@@ -13,6 +13,10 @@ class Event(
     var clubId: Long = 0,
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "club_id", insertable = false, updatable = false)
+    var club: Club? = null,
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "owner_id", nullable = true)
     var owner: AppUser? = null,
 

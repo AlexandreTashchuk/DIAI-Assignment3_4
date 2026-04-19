@@ -36,6 +36,7 @@ interface EventRepository : JpaRepository<Event, Long> {
     // filtros no html, para o futuro, e melhor
     @Query("""
     SELECT e FROM Event e
+    LEFT JOIN FETCH e.club
     WHERE (:type IS NULL OR e.type = :type)
       AND (:clubId IS NULL OR e.clubId = :clubId)
       AND (:from IS NULL OR e.date >= :from)

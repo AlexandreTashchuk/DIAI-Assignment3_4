@@ -117,11 +117,11 @@
             </td>
 
             <td>
-                <a th:if="${clubMap[event.clubId] != null}"
+                <a th:if="${event.club != null}"
                    th:href="@{/clubs/{clubId}(clubId=${event.clubId})}"
-                   th:text="${clubMap[event.clubId].name}">
+                   th:text="${event.club.name}">
                 </a>
-                <span th:unless="${clubMap[event.clubId] != null}" class="text-muted">Unknown club</span>
+                <span th:unless="${event.club != null}" class="text-muted">Unknown club</span>
             </td>
 
             <td th:text="${event.date}"></td>
