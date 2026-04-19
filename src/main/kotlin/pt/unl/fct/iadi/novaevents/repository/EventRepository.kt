@@ -21,6 +21,9 @@ interface EventRepository : JpaRepository<Event, Long> {
 
     fun findByClubIdAndType(clubId: Long, type: Event.EventType): List<Event>
 
+    @Query("SELECT (COUNT(e) > 0) FROM Event e WHERE e.id = :eventId AND e.owner.username = :username")
+    fun isOwner(eventId: Long, username: String): Boolean
+
     // filtros no html, para o futuro, e melhor
     @Query("""
     SELECT e FROM Event e

@@ -3,7 +3,6 @@ package pt.unl.fct.iadi.novaevents.controller
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.validation.BindingResult
-import org.springframework.web.servlet.mvc.method.annotation.SseEmitter.event
 import pt.unl.fct.iadi.novaevents.controller.dto.EventForm
 import pt.unl.fct.iadi.novaevents.model.Event
 import pt.unl.fct.iadi.novaevents.repository.EventRepository
@@ -14,7 +13,7 @@ import java.time.LocalDate
 @Controller
 class NovaeventsController(val service: NovaeventsService, val eventRepository: EventRepository) : NovaeventsAPI {
 
-    //    override fun listAllClubs(model: Model): String {
+//    override fun listAllClubs(model: Model): String {
 //        model.addAttribute("clubs", service.listAllClubs())
 //        return "clubs/list"
 //    }
@@ -131,7 +130,7 @@ class NovaeventsController(val service: NovaeventsService, val eventRepository: 
         eventId: Long,
         model: Model
     ): String {
-        val event = service.getEventById(clubId, eventId)
+        val event = service.getEventForEdit(clubId, eventId)
 
         val form = EventForm(
             name = event.name,
@@ -182,7 +181,7 @@ class NovaeventsController(val service: NovaeventsService, val eventRepository: 
         eventId: Long,
         model: Model
     ): String {
-        val event = service.getEventById(clubId, eventId)
+        val event = service.getEventForDelete(clubId, eventId)
 
         model.addAttribute("event", event)
         model.addAttribute("clubId", clubId)

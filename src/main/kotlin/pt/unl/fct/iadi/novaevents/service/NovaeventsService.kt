@@ -1,16 +1,19 @@
 package pt.unl.fct.iadi.novaevents.service
 
+import org.springframework.security.access.prepost.PreAuthorize
+import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Service
-import org.springframework.web.servlet.mvc.method.annotation.SseEmitter.event
 import pt.unl.fct.iadi.novaevents.controller.dto.EventForm
 import pt.unl.fct.iadi.novaevents.model.Club
 import pt.unl.fct.iadi.novaevents.model.Event
+import pt.unl.fct.iadi.novaevents.repository.AppUserRepository
 import pt.unl.fct.iadi.novaevents.repository.ClubRepository
 import pt.unl.fct.iadi.novaevents.repository.EventRepository
 import java.time.LocalDate
 
 @Service
 class NovaeventsService(
+    private val appUserRepository: AppUserRepository,
     private val clubRepository: ClubRepository,
     private val eventRepository: EventRepository
 ) {
@@ -167,6 +170,10 @@ class NovaeventsService(
         return event
     }
 
+    @PreAuthorize("hasAnyRole('EDITOR','ADMIN') and @eventSecurity.isOwner(#eventId, authentication)")
+    fun getEventForEdit(clubId: Long, eventId: Long): Event = getEventById(clubId, eventId)
+
+    @PreAuthorize("hasAnyRole('EDITOR','ADMIN')")
     fun createEvent(clubId: Long, form: EventForm): Event {
 
         getClubById(clubId)
@@ -177,6 +184,7 @@ class NovaeventsService(
 
         val event = Event(
             clubId = clubId,
+            owner = currentUser(),
             name = form.name,
             date = form.date!!,
             location = form.location ?: "",
@@ -187,6 +195,7 @@ class NovaeventsService(
         return eventRepository.save(event)
     }
 
+    @PreAuthorize("hasAnyRole('EDITOR','ADMIN') and @eventSecurity.isOwner(#eventId, authentication)")
     fun updateEventById(eventId: Long, clubId: Long, form: EventForm): Event {
 
         getClubById(clubId)
@@ -205,6 +214,7 @@ class NovaeventsService(
         val updated = Event(
             id = existing.id,
             clubId = clubId,
+            owner = existing.owner,
             name = form.name,
             date = form.date!!,
             location = form.location ?: existing.location,
@@ -215,6 +225,10 @@ class NovaeventsService(
         return eventRepository.save(updated)
     }
 
+    @PreAuthorize("hasAnyRole('EDITOR','ADMIN') and @eventSecurity.isOwnerOrAdmin(#eventId, authentication)")
+    fun getEventForDelete(clubId: Long, eventId: Long): Event = getEventById(clubId, eventId)
+
+    @PreAuthorize("hasAnyRole('EDITOR','ADMIN') and @eventSecurity.isOwnerOrAdmin(#eventId, authentication)")
     fun deleteEventById(clubId: Long, eventId: Long) {
 
         getClubById(clubId)
@@ -234,4 +248,8 @@ class NovaeventsService(
         val counts = eventRepository.countEventsByClub().associateBy { it.clubId }
         return clubs.map { club -> club to (counts[club.id]?.eventCount ?: 0) }
     }
+
+    private fun currentUser() =
+        appUserRepository.findByUsername(SecurityContextHolder.getContext().authentication.name)
+            ?: throw IllegalStateException("Authenticated user does not exist in database")
 }
