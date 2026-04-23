@@ -15,10 +15,6 @@ class NovaeventsController(val service: NovaeventsService, val eventRepository: 
 
     data class ClubOption(val id: Long, val name: String)
 
-//    override fun listAllClubs(model: Model): String {
-//        model.addAttribute("clubs", service.listAllClubs())
-//        return "clubs/list"
-//    }
     override fun listAllClubs(model: Model): String {
         val clubs = service.listAllClubs()
 

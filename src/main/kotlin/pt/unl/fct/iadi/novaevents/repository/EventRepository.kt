@@ -33,14 +33,15 @@ interface EventRepository : JpaRepository<Event, Long> {
     )
     fun backfillMissingOwners(@Param("ownerId") ownerId: Long): Int
 
-    // filtros no html, para o futuro, e melhor
-    @Query("""
+    @Query(
+        """
     SELECT e FROM Event e
     WHERE (:type IS NULL OR e.type = :type)
       AND (:clubId IS NULL OR e.clubId = :clubId)
       AND (:from IS NULL OR e.date >= :from)
       AND (:to IS NULL OR e.date <= :to)
-""")
+"""
+    )
     fun filterEvents(
         type: Event.EventType?,
         clubId: Long?,
@@ -48,7 +49,8 @@ interface EventRepository : JpaRepository<Event, Long> {
         to: LocalDate?
     ): List<Event>
 
-    @Query("""
+    @Query(
+        """
     SELECT e.id AS id,
            e.clubId AS clubId,
            c.name AS clubName,
@@ -62,7 +64,8 @@ interface EventRepository : JpaRepository<Event, Long> {
       AND (:clubId IS NULL OR e.clubId = :clubId)
       AND (:from IS NULL OR e.date >= :from)
       AND (:to IS NULL OR e.date <= :to)
-""")
+"""
+    )
     fun filterEventRows(
         type: Event.EventType?,
         clubId: Long?,

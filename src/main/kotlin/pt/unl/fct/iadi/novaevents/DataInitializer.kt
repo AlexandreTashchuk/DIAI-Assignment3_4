@@ -44,31 +44,31 @@ class DataInitializer(
                     Club(
                         name = "Chess Club",
                         description = "A community for players of all skill levels to learn, practice, and compete in chess. " +
-                            "We host weekly matches, strategy sessions, and tournaments, and participate in inter-university competitions.",
+                                "We host weekly matches, strategy sessions, and tournaments, and participate in inter-university competitions.",
                         category = Club.ClubCategory.SPORTS
                     ),
                     Club(
                         name = "Robotics Club",
                         description = "The Robotics Club is the place to turn ideas into machines. Members work on hands-on projects involving " +
-                            "electronics, programming, and mechanical design, and regularly participate in robotics competitions.",
+                                "electronics, programming, and mechanical design, and regularly participate in robotics competitions.",
                         category = Club.ClubCategory.TECHNOLOGY
                     ),
                     Club(
                         name = "Photography Club",
                         description = "A space for photography enthusiasts to improve their skills and showcase their work. Activities include " +
-                            "photo walks, editing workshops, and exhibitions across multiple photography styles.",
+                                "photo walks, editing workshops, and exhibitions across multiple photography styles.",
                         category = Club.ClubCategory.SOCIAL
                     ),
                     Club(
                         name = "Hiking & Outdoors Club",
                         description = "Focused on outdoor activities such as hiking and camping, this club organizes regular trips to natural " +
-                            "locations, promoting physical activity, exploration, and environmental awareness.",
+                                "locations, promoting physical activity, exploration, and environmental awareness.",
                         category = Club.ClubCategory.SOCIAL
                     ),
                     Club(
                         name = "Film Society",
                         description = "A club for cinema enthusiasts to watch and discuss films from different genres and cultures. " +
-                            "Includes screenings, thematic series, and discussions on film techniques and storytelling.",
+                                "Includes screenings, thematic series, and discussions on film techniques and storytelling.",
                         category = Club.ClubCategory.CULTURAL
                     )
                 )

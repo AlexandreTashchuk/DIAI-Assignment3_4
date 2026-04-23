@@ -29,6 +29,7 @@ class JwtAuthenticationFilter(
                 runCatching {
                     val claims = jwtService.parseClaims(token)
                     val username = claims.subject
+
                     @Suppress("UNCHECKED_CAST")
                     val roles = claims["roles"] as? List<String> ?: emptyList()
                     val authorities = roles.map { SimpleGrantedAuthority(it) }

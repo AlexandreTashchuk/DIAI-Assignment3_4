@@ -19,11 +19,12 @@ class RequestAuditInterceptor : HandlerInterceptor {
         ex: Exception?
     ) {
         val authentication = SecurityContextHolder.getContext().authentication
-        val principal = if (authentication != null && authentication.isAuthenticated && authentication.name != "anonymousUser") {
-            authentication.name
-        } else {
-            "anonymous"
-        }
+        val principal =
+            if (authentication != null && authentication.isAuthenticated && authentication.name != "anonymousUser") {
+                authentication.name
+            } else {
+                "anonymous"
+            }
 
         logger.info("[{}] {} {} [{}]", principal, request.method, request.requestURI, response.status)
     }
